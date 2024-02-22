@@ -1,9 +1,13 @@
+from src.UI.menu import Menu
+from src.AnaliseDados.analisador import Analisador
 from src.LeituraDeArquivos.Leitor import Leitor
-import os
 
-leitor = Leitor('utf-8')
+# menu = Menu()
 
-linhas = leitor.lerLinhasArquivo('data/aicbrasill.com.br-ssl_log')
+# menu.executar()
+leitor = Leitor()
+analisador = Analisador()
 
-for item in range(3):
-    print(linhas[item])
+linhas = leitor.lerLinhasArquivo('data/teste.log')
+analisador.contarNumeroAcessosPorIp(linhas)
+
