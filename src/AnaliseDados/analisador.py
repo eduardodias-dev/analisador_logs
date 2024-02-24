@@ -1,10 +1,17 @@
-import json
+import re
 from src.AnaliseDados.models.LogApache import LogApache
 from src.AnaliseDados.models.LogApache import LogApacheMapper
 class Analisador:
     def __init__(self):
         pass
 
+    #Mapeia as linhas a partir de uma lista
+    def mapearLinhas(self, linhas: list):
+        listaLogs = []
+        mapper = LogApacheMapper()
+        listaLogs = [mapper.converterAPartirDaLinha(linha) for linha in linhas]
+        return listaLogs
+    
     #contar o número de acessos por IP
     def pegarNumeroAcessosPorIp(self, linhas: list):
         if len(linhas) > 0: 
@@ -21,13 +28,6 @@ class Analisador:
             print("Arquivo não contém linhas.")
             return None
 
-    def mapearLinhas(self, linhas: list):
-        listaLogs = []
-        mapper = LogApacheMapper()
-        
-        #listaLogs = [mapper.converterAPartirDaLinha(linha).__dict__ for item, linha in enumerate(linhas) if item < 6]
-        listaLogs = [mapper.converterAPartirDaLinha(linha) for linha in linhas]
-        return listaLogs
     
     #identificar os principais agentes de usuário
     def pegarAgentesDeUsuarioOrdenados(self, linhas):
@@ -48,3 +48,32 @@ class Analisador:
             return listaOrdenada
         except Exception as e:
             print('Erro inesperado ao ordenar agentes de Usuário. {}'.format(e))
+
+    #Pegar as páginas mais acessadas
+    def pegarPaginasMaisAcessadas(self, linhas):
+        try:
+            listaLogs = self.mapearLinhas(linhas)
+            dicionario = {}
+
+            for log in listaLogs:
+                #print('rota {}'.format(log['rota']))
+
+                if dicionario.get(log.rota, None) == None:
+                    dicionario[log.rota] = 1
+                else:
+                    dicionario[log.rota] += 1
+
+            listaOrdenada = [{'rota': rota[0], 'numAcessos':rota[1], 'arquivoestatico': self.verificarSeArquivoEstatico(rota[0])} for rota in dicionario.items()]
+            listaOrdenada.sort(key= lambda x : x['numAcessos'], reverse=True)
+            
+            return listaOrdenada
+            
+        except Exception as e:
+            print('Erro inesperado ao pegar as páginas mais acessadas. {}'.format(e))
+        pass
+
+    def verificarSeArquivoEstatico(self, rota):
+        re.sub(r'\?.*', '', rota)
+        padrao = r'\.\w+'
+
+        return True if re.search(padrao, rota) else False
