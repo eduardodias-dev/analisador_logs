@@ -1,4 +1,5 @@
 import re
+from src.Helpers.LogActions import adicionarAoLog
 from src.AnaliseDados.models.LogApache import LogApache
 from src.AnaliseDados.models.LogApache import LogApacheMapper
 class Analisador:
@@ -6,6 +7,7 @@ class Analisador:
         pass
 
     #Mapeia as linhas a partir de uma lista
+    @adicionarAoLog('mapearLinhas')
     def mapearLinhas(self, linhas: list):
         listaLogs = []
         mapper = LogApacheMapper()
@@ -13,6 +15,7 @@ class Analisador:
         return listaLogs
     
     #contar o número de acessos por IP
+    @adicionarAoLog('pegarNumeroAcessosPorIp')
     def pegarNumeroAcessosPorIp(self, linhas: list):
         if len(linhas) > 0: 
             listaIps = (str(linha).split('- -')[0].strip() for linha in linhas) 
@@ -30,6 +33,7 @@ class Analisador:
 
     
     #identificar os principais agentes de usuário
+    @adicionarAoLog('pegarAgentesDeUsuarioOrdenados')
     def pegarAgentesDeUsuarioOrdenados(self, linhas):
         try:
             listaLogs = self.mapearLinhas(linhas)
@@ -50,14 +54,13 @@ class Analisador:
             print('Erro inesperado ao ordenar agentes de Usuário. {}'.format(e))
 
     #Pegar as páginas mais acessadas
+    @adicionarAoLog('pegarPaginasMaisAcessadas')
     def pegarPaginasMaisAcessadas(self, linhas):
         try:
             listaLogs = self.mapearLinhas(linhas)
             dicionario = {}
 
             for log in listaLogs:
-                #print('rota {}'.format(log['rota']))
-
                 if dicionario.get(log.pagina, None) == None:
                     dicionario[log.pagina] = 1
                 else:
