@@ -22,13 +22,15 @@ class Menu:
                         else:
                             leitor = Leitor()
                             linhas = leitor.lerLinhasArquivo(caminhoArquivo)
+                            if len(linhas) < 1 or linhas == None:
+                                break
                             self.selecionarAnalise(linhas)
             except:
                 print("Erro ao executar opção.")
         pass
 
     def selecionarAnalise(self, linhas):
-        op = int(input('Qual análise deseja visualizar?\n1- Contagem de acessos por IP.\n2- Principais agentes de usuário\n3- Páginas mais acessadas\n'))
+        op = int(input('\nQual análise deseja visualizar?\n1- Contagem de acessos por IP.\n2- Principais agentes de usuário\n3- Páginas mais acessadas\n'))
         dados = None
         match op:
             case 1:
@@ -38,6 +40,6 @@ class Menu:
                 dados = self.analisador.pegarAgentesDeUsuarioOrdenados(linhas)
                 pass
             case 3:
-                dados = [item for item in self.analisador.pegarPaginasMaisAcessadas(linhas) if not bool(item['arquivoestatico'])]
+                dados = [item for item in self.analisador.pegarPaginasMaisAcessadas(linhas)]
                 pass
         print(dados)

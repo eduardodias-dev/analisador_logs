@@ -1,6 +1,6 @@
 import re
 class LogApache:
-    def __init__(self, ip='', data='', rota='', metodo='', protocolo='', size='', userAgent='', statusCode=''):
+    def __init__(self, ip='', data='', rota='', metodo='', protocolo='', size='', userAgent='', statusCode='', domain = ''):
         self.ip = ip
         self.data = data
         self.rota = rota
@@ -9,7 +9,12 @@ class LogApache:
         self.size = size
         self.userAgent = userAgent
         self.statusCode = statusCode
+        self.domain = domain
 
+    @property 
+    def pagina(self):
+        return str.join('/', [self.domain.strip('/'), self.rota.strip('/')])
+    
 class LogApacheMapper:
     def converterAPartirDaLinha(self, linha:str):
         logApache = LogApache()
@@ -25,6 +30,7 @@ class LogApacheMapper:
         logApache.metodo = str(stringsNaLinha[0]).split(' ')[0]
         logApache.protocolo = str(stringsNaLinha[0]).split(' ')[2]
         logApache.userAgent = stringsNaLinha[-1]
+        logApache.domain = linha.split(' ')[-2]
         
         return logApache
 

@@ -58,12 +58,12 @@ class Analisador:
             for log in listaLogs:
                 #print('rota {}'.format(log['rota']))
 
-                if dicionario.get(log.rota, None) == None:
-                    dicionario[log.rota] = 1
+                if dicionario.get(log.pagina, None) == None:
+                    dicionario[log.pagina] = 1
                 else:
-                    dicionario[log.rota] += 1
+                    dicionario[log.pagina] += 1
 
-            listaOrdenada = [{'rota': rota[0], 'numAcessos':rota[1], 'arquivoestatico': self.verificarSeArquivoEstatico(rota[0])} for rota in dicionario.items()]
+            listaOrdenada = [{'pagina': pagina[0], 'numAcessos':pagina[1], 'arquivoestatico': self.verificarSeArquivoEstatico(pagina[0])} for pagina in dicionario.items()]
             listaOrdenada.sort(key= lambda x : x['numAcessos'], reverse=True)
             
             return listaOrdenada
